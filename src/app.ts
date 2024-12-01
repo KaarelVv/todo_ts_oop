@@ -1,16 +1,26 @@
-import express, {Request, Response, NextFunction} from 'express'
-import todoRoutes from './routes/todos'
-import { error } from 'console'
+import express, { Request, Response, NextFunction } from 'express';
+import { json } from 'body-parser';
+import todoRoutes from './routes/todos';
 
-const app = express()
+const app = express();
 
-app.use('/todos', todoRoutes)
+// Middleware
+app.use(json());
 
-app.use((error:Error, req:Request, res:Response, next:NextFunction) => {
-    res.json({message: error.message})
-})
+// Routes
+app.use('/todos', todoRoutes);
+
+// Error Handling Middleware
+app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
+  res.status(500).json({ message: error.message });
+});
 
 
-app.listen(3011, ()=> {
-    console.log('Server started at port 3011')
-})
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
+    next();
+  });
+
+app.listen(3011, () => {
+  console.log('Server started at port 3011');
+});

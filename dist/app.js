@@ -4,7 +4,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const body_parser_1 = require("body-parser");
+const todos_1 = __importDefault(require("./routes/todos"));
 const app = (0, express_1.default)();
+// Middleware
+app.use((0, body_parser_1.json)());
+// Routes
+app.use('/todos', todos_1.default);
+// Error Handling Middleware
+app.use((error, req, res, next) => {
+    res.status(500).json({ message: error.message });
+});
+app.get('/', (req, res) => {
+    res.send('Hello, world!');
+});
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
+    next();
+});
 app.listen(3011, () => {
     console.log('Server started at port 3011');
 });
